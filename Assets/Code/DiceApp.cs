@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +9,7 @@ public class DiceApp : MonoBehaviour
 {
     [Header("Object2D")]
     public string currentEnvId;
+    public DiceSpawnLogic spawnLogic;
 
     [Header("Env2D")]
     public List<Button> envButtons;
@@ -194,6 +196,7 @@ public class DiceApp : MonoBehaviour
         Debug.Log("Environment button clicked: " + environment.name);
         currentEnvId = environment.id;
         screenLogic.gameActive();
+        ReadObject2Ds();
     }
 
     private void OnDeleteEnvironmentButtonClicked(Environment2D environment)
@@ -217,6 +220,12 @@ public class DiceApp : MonoBehaviour
                 List<Object2D> object2Ds = dataResponse.Data;
                 Debug.Log("List of object2Ds: " + object2Ds);
                 object2Ds.ForEach(object2D => Debug.Log(object2D.id));
+
+                object2Ds.ForEach(object2D =>
+                {
+                    Vector2 position = new Vector2(object2D.positionX, object2D.positionY);
+                    spawnLogic.loadDice(object2D.prefabId, position, object2D);
+                });
                 // TODO: Succes scenario. Show the enviroments in the UI
                 break;
             case WebRequestError errorResponse:
@@ -230,10 +239,10 @@ public class DiceApp : MonoBehaviour
     }
 
     [ContextMenu("Object2D/Create")]
-    public async void CreateObject2D(string prefabId, int positionX, int positionY)
+    public async void CreateObject2D(string prefabId, float positionX, float positionY)
     {
         var object2D = new Object2D(currentEnvId, prefabId, positionX, positionY);
-
+        Debug.Log("creating object 2d: " + object2D.id);
         IWebRequestReponse webRequestResponse = await object2DApiClient.CreateObject2D(object2D);
 
         switch (webRequestResponse)
@@ -251,11 +260,31 @@ public class DiceApp : MonoBehaviour
                 throw new NotImplementedException("No implementation for webRequestResponse of class: " + webRequestResponse.GetType());
         }
     }
+    public async void CreateObject2D(Object2D object2d)
+    {
+        Debug.Log("updating object 2d: " + object2d.id);
+
+        IWebRequestReponse webRequestResponse = await object2DApiClient.CreateObject2D(object2d);
+
+        switch (webRequestResponse)
+        {
+            case WebRequestData<Object2D> dataResponse:
+                object2d.id = dataResponse.Data.id;
+                // TODO: Handle succes scenario.
+                break;
+            case WebRequestError errorResponse:
+                string errorMessage = errorResponse.ErrorMessage;
+                Debug.Log("Create Object2D error: " + errorMessage);
+                // TODO: Handle error scenario. Show the errormessage to the user.
+                break;
+            default:
+                throw new NotImplementedException("No implementation for webRequestResponse of class: " + webRequestResponse.GetType());
+        }
+    }
 
     [ContextMenu("Object2D/Update")]
-    public async void UpdateObject2D(string prefabId, int positionX, int positionY)
+    public async void UpdateObject2D(Object2D object2D)
     {
-        var object2D = new Object2D(currentEnvId, prefabId, positionX, positionY);
         IWebRequestReponse webRequestResponse = await object2DApiClient.UpdateObject2D(object2D);
 
         switch (webRequestResponse)

@@ -23,7 +23,7 @@ public class Object2D
 
     public float scaleY;
 
-    public Object2D(string environmentId, string prefabId, int positionX, int positionY)
+    public Object2D(string environmentId, string prefabId, float positionX, float positionY)
     {
         this.environmentId = environmentId;
         this.prefabId = prefabId;

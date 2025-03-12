@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Draggable : MonoBehaviour
 {
+    public event Action OnDragEnd;
+
     public new Transform transform;
     private Vector3 screenPoint;
     private Vector3 offset;
@@ -18,6 +20,7 @@ public class Draggable : MonoBehaviour
     public void StopDragging()
     {
         isDragging = false;
+        OnDragEnd.Invoke();
     }
 
     void OnMouseDown()
