@@ -165,6 +165,7 @@ public class DiceApp : MonoBehaviour
                 Debug.Log("List of object2Ds: " + object2Ds);
                 object2Ds.ForEach(object2D => Debug.Log(object2D.id));
                 GameScreenLogic.object2Ds = object2Ds;
+                GameScreenLogic.loadObjects();
                 
                 // TODO: Succes scenario. Show the enviroments in the UI
                 break;

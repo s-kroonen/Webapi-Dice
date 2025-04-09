@@ -35,10 +35,6 @@ public class DiceSpawnLogic : MonoBehaviour
         }
     }
 
-    public void Reset()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
 
     private bool IsDiceAtPosition(Vector3 position)
     {
@@ -133,5 +129,14 @@ public class DiceSpawnLogic : MonoBehaviour
 
 
         }
+    }
+
+    internal void destroyAllDice()
+    {
+        foreach (var dice in diceList)
+        {
+            Destroy(dice);
+        }
+        diceList.Clear();
     }
 }

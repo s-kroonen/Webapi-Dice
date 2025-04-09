@@ -63,6 +63,8 @@ public class EnvScreenLogic : MonoBehaviour
         }
     }
 
+    
+
     private void OnEnvironmentButtonClicked(Environment2D environment)
     {
         Debug.Log("Environment button clicked: " + environment.name);
@@ -81,5 +83,12 @@ public class EnvScreenLogic : MonoBehaviour
     {
         Debug.Log("Environment create button clicked: " + envNameInput.text);
         diceApp.CreateEnvironment2D(envNameInput.text);
+    }
+    public void OnLogoutButtonClicked()
+    {
+        Debug.Log("Logout button clicked");
+        currentEnvId = "";
+        diceApp.screenLogic.accountActive();
+
     }
 }
