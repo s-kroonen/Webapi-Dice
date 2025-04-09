@@ -78,7 +78,7 @@ public class DiceSpawnLogic : MonoBehaviour
             float posY = position.y;
 
             // Create Object2D and store in dictionary
-            Object2D object2D = new Object2D(diceApp.currentEnvId, dice, posX, posY);
+            Object2D object2D = new Object2D(diceApp.EnvScreenLogic.currentEnvId, dice, posX, posY);
             spawnedDice[newDice] = object2D;
 
             // Save to database

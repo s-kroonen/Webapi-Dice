@@ -7,9 +7,6 @@ using UnityEngine.UI;
 
 public class DiceApp : MonoBehaviour
 {
-    [Header("Object2D")]
-    public string currentEnvId;
-    public DiceSpawnLogic spawnLogic;
 
     [Header("Dependencies")]
     public UserApiClient userApiClient;
@@ -18,6 +15,7 @@ public class DiceApp : MonoBehaviour
     public ScreenLogic screenLogic;
     public AccountScreenLogic AccountScreenLogic;
     public EnvScreenLogic EnvScreenLogic;
+    public GameScreenLogic GameScreenLogic;
 
 
     public void Start()
@@ -158,7 +156,7 @@ public class DiceApp : MonoBehaviour
     [ContextMenu("Object2D/Read all")]
     public async void ReadObject2Ds()
     {
-        IWebRequestReponse webRequestResponse = await object2DApiClient.ReadObject2Ds(currentEnvId);
+        IWebRequestReponse webRequestResponse = await object2DApiClient.ReadObject2Ds(EnvScreenLogic.currentEnvId);
 
         switch (webRequestResponse)
         {
@@ -166,12 +164,8 @@ public class DiceApp : MonoBehaviour
                 List<Object2D> object2Ds = dataResponse.Data;
                 Debug.Log("List of object2Ds: " + object2Ds);
                 object2Ds.ForEach(object2D => Debug.Log(object2D.id));
-
-                object2Ds.ForEach(object2D =>
-                {
-                    Vector2 position = new Vector2(object2D.positionX, object2D.positionY);
-                    spawnLogic.loadDice(object2D.prefabId, position, object2D);
-                });
+                GameScreenLogic.object2Ds = object2Ds;
+                
                 // TODO: Succes scenario. Show the enviroments in the UI
                 break;
             case WebRequestError errorResponse:
@@ -187,7 +181,7 @@ public class DiceApp : MonoBehaviour
     [ContextMenu("Object2D/Create")]
     public async void CreateObject2D(string prefabId, float positionX, float positionY)
     {
-        var object2D = new Object2D(currentEnvId, prefabId, positionX, positionY);
+        var object2D = new Object2D(EnvScreenLogic.currentEnvId, prefabId, positionX, positionY);
         Debug.Log("creating object 2d: " + object2D.id);
         IWebRequestReponse webRequestResponse = await object2DApiClient.CreateObject2D(object2D);
 

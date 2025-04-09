@@ -23,8 +23,10 @@ public class Object2D
 
     public float scaleY;
 
+
     public Object2D(string environmentId, string prefabId, float positionX, float positionY)
     {
+        this.id = Convert.ToString(Guid.Empty);
         this.environmentId = environmentId;
         this.prefabId = prefabId;
         this.positionX = positionX;

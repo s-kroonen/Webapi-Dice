@@ -68,6 +68,8 @@ public class EnvScreenLogic : MonoBehaviour
         Debug.Log("Environment button clicked: " + environment.name);
         currentEnvId = environment.id;
         diceApp.ReadObject2Ds();
+        diceApp.screenLogic.gameActive();
+
     }
 
     private void OnDeleteEnvironmentButtonClicked(Environment2D environment)
