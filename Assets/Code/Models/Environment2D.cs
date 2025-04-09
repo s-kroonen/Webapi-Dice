@@ -16,5 +16,6 @@ public class Environment2D
     public Environment2D(string name)
     {
         this.name = name;
+        this.id = Convert.ToString(Guid.Empty);
     }
 }

@@ -7,26 +7,26 @@ public class Environment2DApiClient : MonoBehaviour
 {
     public WebClient webClient;
 
+    private string Route = "/api/environments";
+
     public async Awaitable<IWebRequestReponse> ReadEnvironment2Ds() 
     {
-        string route = "/environments";
 
-        IWebRequestReponse webRequestResponse = await webClient.SendGetRequest(route);
+        IWebRequestReponse webRequestResponse = await webClient.SendGetRequest(Route);
         return ParseEnvironment2DListResponse(webRequestResponse);
     }
 
     public async Awaitable<IWebRequestReponse> CreateEnvironment(Environment2D environment)
     {
-        string route = "/environments";
         string data = JsonUtility.ToJson(environment);
 
-        IWebRequestReponse webRequestResponse = await webClient.SendPostRequest(route, data);
+        IWebRequestReponse webRequestResponse = await webClient.SendPostRequest(Route, data);
         return ParseEnvironment2DResponse(webRequestResponse);
     }
 
     public async Awaitable<IWebRequestReponse> DeleteEnvironment(string environmentId)
     {
-        string route = "/environments/" + environmentId;
+        string route = $"{Route}/{environmentId}";
         return await webClient.SendDeleteRequest(route);
     }
 

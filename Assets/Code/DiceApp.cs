@@ -11,25 +11,20 @@ public class DiceApp : MonoBehaviour
     public string currentEnvId;
     public DiceSpawnLogic spawnLogic;
 
-    [Header("Env2D")]
-    public List<Button> envButtons;
-    public Button createEnv;
-    public TMP_InputField envNameInput;
-
     [Header("Dependencies")]
     public UserApiClient userApiClient;
     public Environment2DApiClient enviroment2DApiClient;
     public Object2DApiClient object2DApiClient;
     public ScreenLogic screenLogic;
+    public AccountScreenLogic AccountScreenLogic;
+    public EnvScreenLogic EnvScreenLogic;
 
-    public TMP_InputField LoginUsernameInput;
-    public TMP_InputField LoginPasswordInput;
-    public TMP_InputField RegisterUsernameInput;
-    public TMP_InputField RegisterPasswordInput;
 
     public void Start()
     {
-        envNameInput.characterLimit = 25;
+        //envNameInput.characterLimit = 25;
+        screenLogic.accountActive();
+
     }
 
     #region Login
@@ -37,14 +32,15 @@ public class DiceApp : MonoBehaviour
     [ContextMenu("User/Register")]
     public async void Register()
     {
-        var user = new User(RegisterUsernameInput.text, RegisterPasswordInput.text);
+        var user = new User(AccountScreenLogic.LoginFields[0].text, AccountScreenLogic.LoginFields[1].text);
         IWebRequestReponse webRequestResponse = await userApiClient.Register(user);
 
         switch (webRequestResponse)
         {
             case WebRequestData<string> dataResponse:
                 Debug.Log("Register succes!");
-                screenLogic.loginActive();
+                screenLogic.accountActive();
+                AccountScreenLogic.setLoginState();
                 break;
             case WebRequestError errorResponse:
                 string errorMessage = errorResponse.ErrorMessage;
@@ -59,7 +55,7 @@ public class DiceApp : MonoBehaviour
     [ContextMenu("User/Login")]
     public async void Login()
     {
-        var user = new User(LoginUsernameInput.text, LoginPasswordInput.text);
+        var user = new User(AccountScreenLogic.LoginFields[0].text, AccountScreenLogic.LoginFields[1].text);
         IWebRequestReponse webRequestResponse = await userApiClient.Login(user);
 
         switch (webRequestResponse)
@@ -86,7 +82,6 @@ public class DiceApp : MonoBehaviour
     [ContextMenu("Environment2D/Read all")]
     public async void ReadEnvironment2Ds()
     {
-        envNameInput.text = "";
         IWebRequestReponse webRequestResponse = await enviroment2DApiClient.ReadEnvironment2Ds();
 
         switch (webRequestResponse)
@@ -95,46 +90,9 @@ public class DiceApp : MonoBehaviour
                 List<Environment2D> environment2Ds = dataResponse.Data;
                 Debug.Log("List of environment2Ds: ");
                 environment2Ds.ForEach(environment2D => Debug.Log(environment2D.id));
+                EnvScreenLogic.environment2Ds = environment2Ds;
+                EnvScreenLogic.UpdateUI();
 
-                for (int i = 0; i < envButtons.Count; i++)
-                {
-                    if (i < environment2Ds.Count)
-                    {
-                        envButtons[i].gameObject.SetActive(true);
-                        envButtons[i].GetComponentInChildren<TextMeshProUGUI>().text = environment2Ds[i].name;
-                        int index = i;
-                        envButtons[i].onClick.RemoveAllListeners();
-                        envButtons[i].onClick.AddListener(() => OnEnvironmentButtonClicked(environment2Ds[index]));
-                    }
-                    else
-                    {
-                        envButtons[i].gameObject.SetActive(false);
-                    }
-                }
-
-                for (int i = 0; i < envButtons.Count; i++)
-                {
-                    if (i < environment2Ds.Count)
-                    {
-                        envButtons[i].transform.GetChild(1).gameObject.SetActive(true);
-                        int index = i;
-                        envButtons[i].transform.GetChild(1).GetComponent<Button>().onClick.RemoveAllListeners();
-                        envButtons[i].transform.GetChild(1).GetComponent<Button>().onClick.AddListener(() => OnDeleteEnvironmentButtonClicked(environment2Ds[index]));
-                    }
-                    else
-                    {
-                        envButtons[i].transform.GetChild(1).gameObject.SetActive(false);
-                    }
-                }
-
-                if (environment2Ds.Count >= 5)
-                {
-                    createEnv.gameObject.SetActive(false);
-                }
-                else
-                {
-                    createEnv.gameObject.SetActive(true);
-                }
                 break;
             case WebRequestError errorResponse:
                 string errorMessage = errorResponse.ErrorMessage;
@@ -147,9 +105,9 @@ public class DiceApp : MonoBehaviour
     }
 
     [ContextMenu("Environment2D/Create")]
-    public async void CreateEnvironment2D()
+    public async void CreateEnvironment2D(string name)
     {
-        var environment2D = new Environment2D(envNameInput.text);
+        var environment2D = new Environment2D(name);
 
         IWebRequestReponse webRequestResponse = await enviroment2DApiClient.CreateEnvironment(environment2D);
 
@@ -191,19 +149,7 @@ public class DiceApp : MonoBehaviour
         }
     }
 
-    private void OnEnvironmentButtonClicked(Environment2D environment)
-    {
-        Debug.Log("Environment button clicked: " + environment.name);
-        currentEnvId = environment.id;
-        screenLogic.gameActive();
-        ReadObject2Ds();
-    }
-
-    private void OnDeleteEnvironmentButtonClicked(Environment2D environment)
-    {
-        Debug.Log("Environment button clicked: " + environment.name);
-        DeleteEnvironment2D(environment.id);
-    }
+    
 
     #endregion Environment
 

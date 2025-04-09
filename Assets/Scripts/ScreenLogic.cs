@@ -2,36 +2,24 @@ using UnityEngine;
 
 public class ScreenLogic : MonoBehaviour
 {
-    public GameObject LoginObject;
-    public GameObject RegisterObject;
+    public GameObject AccountObject;
     public GameObject MainObject;
     public GameObject EnvObject;
-
-    public void loginActive()
+    public void accountActive()
     {
-        LoginObject.SetActive(true);
-        RegisterObject.SetActive(false);
-        MainObject.SetActive(false);
-        EnvObject.SetActive(false);
-    }
-    public void registerActive()
-    {
-        LoginObject.SetActive(false);
-        RegisterObject.SetActive(true);
+        AccountObject.SetActive(true);
         MainObject.SetActive(false);
         EnvObject.SetActive(false);
     }
     public void gameActive()
     {
-        LoginObject.SetActive(false);
-        RegisterObject.SetActive(false);
+        AccountObject.SetActive(false);
         MainObject.SetActive(true);
         EnvObject.SetActive(false);
     }
     public void envActive()
     {
-        LoginObject.SetActive(false);
-        RegisterObject.SetActive(false);
+        AccountObject.SetActive(false);
         MainObject.SetActive(false);
         EnvObject.SetActive(true);
     }
